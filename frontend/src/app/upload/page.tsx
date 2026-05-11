@@ -1,0 +1,91 @@
+"use client";
+
+import { PageHeader } from "@/components/layout/PageHeader";
+import { FileDropZone } from "@/components/upload/FileDropZone";
+import { ValidationSummary } from "@/components/upload/ValidationSummary";
+import { ErrorTable } from "@/components/upload/ErrorTable";
+import { Card } from "@/components/ui/Card";
+import { Spinner } from "@/components/ui/Spinner";
+import { useUpload } from "@/lib/hooks/useUpload";
+import { useToast } from "@/lib/providers/ToastProvider";
+import { UploadResult } from "@/types/transaction";
+import { useState } from "react";
+
+export default function UploadPage() {
+  const upload = useUpload();
+  const { addToast } = useToast();
+  const [result, setResult] = useState<UploadResult | null>(null);
+
+  const handleFileSelect = async (file: File) => {
+    setResult(null);
+    try {
+      const response = await upload.mutateAsync(file);
+      if (response.data) {
+        setResult(response.data);
+        if (response.data.error_rows === 0) {
+          addToast("success", `Successfully processed ${response.data.valid_rows} transactions`);
+        } else {
+          addToast(
+            "info",
+            `Processed ${response.data.valid_rows} valid, ${response.data.error_rows} errors`,
+          );
+        }
+      }
+    } catch (err) {
+      addToast("error", err instanceof Error ? err.message : "Upload failed");
+    }
+  };
+
+  return (
+    <div className="mx-auto max-w-4xl">
+      <PageHeader
+        title="Upload Transactions"
+        description="Upload CSV or XLSX files to process and validate transactions."
+      />
+
+      <Card className="mb-6">
+        <FileDropZone
+          onFileSelect={handleFileSelect}
+          disabled={upload.isPending}
+        />
+        {upload.isPending && (
+          <div className="mt-4 flex items-center gap-2 text-sm text-slate-400">
+            <Spinner />
+            <span>Processing file...</span>
+          </div>
+        )}
+      </Card>
+
+      {result && (
+        <div className="space-y-6">
+          <ValidationSummary result={result} />
+          {result.errors.length > 0 && (
+            <div>
+              <h2 className="mb-3 text-lg font-semibold text-white">
+                Validation Errors
+              </h2>
+              <ErrorTable errors={result.errors} />
+            </div>
+          )}
+          {result.affected_clients.length > 0 && (
+            <Card>
+              <h3 className="mb-2 text-sm font-medium text-slate-400">
+                Affected Clients
+              </h3>
+              <div className="flex flex-wrap gap-2">
+                {result.affected_clients.map((id) => (
+                  <span
+                    key={id}
+                    className="rounded-lg bg-cyan-500/10 px-3 py-1 text-sm font-mono text-cyan-400"
+                  >
+                    {id}
+                  </span>
+                ))}
+              </div>
+            </Card>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
