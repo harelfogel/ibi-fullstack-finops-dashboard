@@ -1,0 +1,26 @@
+# macOS
+.DS_Store
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+venv/
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Local databases and generated files
+*.db
+*.sqlite
+*.sqlite3
+uploads/
+tmp/
+
+# Logs
+*.log
