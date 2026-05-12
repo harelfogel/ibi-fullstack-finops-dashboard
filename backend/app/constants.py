@@ -38,6 +38,12 @@ class ViolationSeverity(StrEnum):
     WARNING = "warning"
 
 
+class LLMProviderType(StrEnum):
+    ANTHROPIC = "anthropic"
+    OPENAI = "openai"
+    MOCK = "mock"
+
+
 class ErrorCode(StrEnum):
     # Upload errors
     UPLOAD_INVALID_FORMAT = "UPLOAD_INVALID_FORMAT"
