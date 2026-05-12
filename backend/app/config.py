@@ -21,6 +21,7 @@ class Settings(BaseSettings):
     APP_ENV: str = "development"
     LOG_LEVEL: str = "INFO"
     CORS_ORIGINS: list[str] = ["http://localhost:3000", "http://localhost:3001"]
+    CORS_ORIGIN_REGEX: str = ""
 
     model_config = {"env_file": ".env", "env_file_encoding": "utf-8"}
 

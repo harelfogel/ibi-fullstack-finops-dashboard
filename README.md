@@ -126,3 +126,8 @@ This project is organized as a monorepo:
 - `frontend/` - Next.js dashboard, typed API client, UI components
 - `docs/` - setup, architecture, database, API, and testing notes
 - `sample_data/` - CSV fixtures for upload and QA scenarios
+
+## Deployment
+
+For an assignment/demo deployment, use Render for the backend and Postgres, and Vercel for
+the frontend. See `docs/deployment.md` for the exact steps.
