@@ -9,6 +9,7 @@ from app.dependencies import get_db
 from app.exceptions import NotFoundError
 from app.models.client import Client
 from app.models.portfolio_position import PortfolioPosition
+from app.models.transaction import Transaction
 from app.models.violation import Violation
 from app.schemas.base import ApiResponse
 from app.schemas.client import ClientDetail, ClientSummary
@@ -61,3 +62,22 @@ def get_client(client_id: str, db: Session = Depends(get_db)):
         raise NotFoundError(f"Client '{client_id}' not found")
 
     return ApiResponse(success=True, data=ClientDetail.model_validate(client))
+
+
+@router.delete("/{client_id}", response_model=ApiResponse[dict])
+def delete_client(client_id: str, db: Session = Depends(get_db)):
+    """Delete a client and all associated data."""
+    client = db.query(Client).filter(Client.client_id == client_id).first()
+    if not client:
+        raise NotFoundError(f"Client '{client_id}' not found")
+
+    # Delete in FK-safe order: violations -> transactions -> positions -> client
+    db.query(Violation).filter(Violation.client_id == client_id).delete()
+    db.query(Transaction).filter(Transaction.client_id == client_id).delete()
+    db.query(PortfolioPosition).filter(
+        PortfolioPosition.client_id == client_id
+    ).delete()
+    db.delete(client)
+    db.commit()
+
+    return ApiResponse(success=True, data={"client_id": client_id})
