@@ -10,6 +10,7 @@ import { useUploadModal } from "@/app/AppShell";
 export default function ClientsPage() {
   const { data: clients, isLoading, error } = useClients();
   const { openUploadModal } = useUploadModal();
+  const hasClients = clients && clients.length > 0;
 
   return (
     <div>
@@ -17,13 +18,15 @@ export default function ClientsPage() {
         title="Clients"
         description="Overview of all clients with portfolio summaries and violation status."
         actions={
-          <button
-            onClick={openUploadModal}
-            className="flex items-center gap-2 rounded-lg bg-cyan-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-cyan-500"
-          >
-            <UploadIcon className="h-4 w-4" />
-            Upload Transactions
-          </button>
+          hasClients ? (
+            <button
+              onClick={openUploadModal}
+              className="flex items-center gap-2 rounded-lg bg-cyan-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-cyan-500"
+            >
+              <UploadIcon className="h-4 w-4" />
+              Upload Transactions
+            </button>
+          ) : undefined
         }
       />
 
