@@ -34,7 +34,7 @@ export default function ClientLayout({ children }: { children: ReactNode }) {
       </div>
 
       {/* Tab navigation */}
-      <div className="mb-6 flex gap-1 rounded-lg bg-slate-900 p-1">
+      <div className="mb-6 flex gap-1 rounded-lg bg-slate-900 p-1 border border-slate-800">
         {tabs.map((tab) => {
           const href = `/clients/${clientId}/${tab.segment}`;
           const isActive = pathname.includes(tab.segment);
@@ -43,10 +43,10 @@ export default function ClientLayout({ children }: { children: ReactNode }) {
               key={tab.segment}
               href={href}
               className={cn(
-                "flex-1 rounded-md px-4 py-2 text-center text-sm font-medium transition-colors",
+                "flex-1 rounded-md px-4 py-2.5 text-center text-sm font-medium transition-all",
                 isActive
-                  ? "bg-slate-800 text-white shadow"
-                  : "text-slate-400 hover:text-slate-200",
+                  ? "bg-cyan-600 text-white shadow-md"
+                  : "text-slate-400 hover:bg-slate-800 hover:text-slate-200",
               )}
             >
               {tab.label}
