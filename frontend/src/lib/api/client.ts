@@ -43,6 +43,7 @@ export const api = {
       method: "POST",
       body: body instanceof FormData ? body : JSON.stringify(body),
     }),
+  delete: <T>(path: string) => request<T>(path, { method: "DELETE" }),
   upload: <T>(path: string, file: File) => {
     const formData = new FormData();
     formData.append("file", file);
