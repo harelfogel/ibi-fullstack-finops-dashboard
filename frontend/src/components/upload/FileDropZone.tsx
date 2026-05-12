@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useState, type DragEvent } from "react";
+import { motion } from "framer-motion";
 import { cn } from "@/lib/utils/cn";
 
 interface FileDropZoneProps {
@@ -54,19 +55,28 @@ export function FileDropZone({ onFileSelect, disabled }: FileDropZoneProps) {
         disabled && "pointer-events-none opacity-50",
       )}
     >
-      <svg
-        className="mb-4 h-12 w-12 text-slate-500"
-        fill="none"
-        viewBox="0 0 24 24"
-        strokeWidth={1}
-        stroke="currentColor"
+      <motion.div
+        animate={{ y: [0, -8, 0] }}
+        transition={{
+          duration: 2,
+          repeat: Infinity,
+          ease: "easeInOut",
+        }}
       >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"
-        />
-      </svg>
+        <svg
+          className="mb-4 h-12 w-12 text-slate-500"
+          fill="none"
+          viewBox="0 0 24 24"
+          strokeWidth={1}
+          stroke="currentColor"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"
+          />
+        </svg>
+      </motion.div>
       <p className="text-sm text-slate-400">
         <span className="font-medium text-cyan-400">Click to upload</span> or
         drag and drop
