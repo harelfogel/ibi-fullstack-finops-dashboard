@@ -9,11 +9,14 @@ class LLMProvider(ABC):
     """Base class all LLM providers must implement."""
 
     @abstractmethod
-    def generate_insights(self, prompt: str) -> InsightResponse:
+    def generate_insights(
+        self, prompt: str, system_prompt: str = ""
+    ) -> InsightResponse:
         """Generate portfolio insights from a prompt.
 
         Args:
             prompt: Formatted portfolio analysis prompt.
+            system_prompt: System-level instructions for the LLM.
 
         Returns:
             Validated InsightResponse with summary, recommendations,

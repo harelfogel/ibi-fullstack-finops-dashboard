@@ -11,7 +11,9 @@ class MockProvider(LLMProvider):
     providers fail validation.
     """
 
-    def generate_insights(self, prompt: str) -> InsightResponse:
+    def generate_insights(
+        self, prompt: str, system_prompt: str = ""
+    ) -> InsightResponse:
         return InsightResponse(
             summary="Mock analysis: portfolio appears stable with moderate diversification.",
             recommendations=[

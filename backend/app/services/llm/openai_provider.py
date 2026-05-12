@@ -13,7 +13,9 @@ class OpenAIProvider(LLMProvider):
         self._temperature = temperature
         self._max_tokens = max_tokens
 
-    def generate_insights(self, prompt: str) -> InsightResponse:
+    def generate_insights(
+        self, prompt: str, system_prompt: str = ""
+    ) -> InsightResponse:
         raise NotImplementedError(
             "OpenAI provider is a stub for future use. "
             "Set LLM_PROVIDER=anthropic or LLM_PROVIDER=mock."

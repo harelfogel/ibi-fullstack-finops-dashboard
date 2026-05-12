@@ -20,13 +20,19 @@ class AnthropicProvider(LLMProvider):
         self._temperature = temperature
         self._max_tokens = max_tokens
 
-    def generate_insights(self, prompt: str) -> InsightResponse:
-        message = self._client.messages.create(
-            model=self._model,
-            max_tokens=self._max_tokens,
-            temperature=self._temperature,
-            messages=[{"role": "user", "content": prompt}],
-        )
+    def generate_insights(
+        self, prompt: str, system_prompt: str = ""
+    ) -> InsightResponse:
+        kwargs: dict = {
+            "model": self._model,
+            "max_tokens": self._max_tokens,
+            "temperature": self._temperature,
+            "messages": [{"role": "user", "content": prompt}],
+        }
+        if system_prompt:
+            kwargs["system"] = system_prompt
+
+        message = self._client.messages.create(**kwargs)
 
         response_text = message.content[0].text
 
