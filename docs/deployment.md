@@ -33,6 +33,30 @@ Expected response:
 
 The backend Docker command runs Alembic migrations before starting the FastAPI app.
 
+### Anthropic API Key
+
+Do not commit the Anthropic API key to GitHub.
+
+If you create the Blueprint for the first time, Render prompts for `ANTHROPIC_API_KEY`
+because it is declared with `sync: false` in `render.yaml`.
+
+If the Blueprint already exists, add or update it manually:
+
+1. Open Render service `ibi-finops-backend`.
+2. Go to **Environment**.
+3. Set:
+
+```text
+LLM_PROVIDER=anthropic
+ANTHROPIC_API_KEY=<your Anthropic key>
+```
+
+4. Click **Save Changes**.
+5. Click **Manual Deploy > Deploy latest commit** or restart the service.
+
+The deployed service does not read your local `backend/.env` file. It only reads the
+environment variables configured in Render.
+
 ## 2. Vercel Frontend
 
 1. In Vercel, choose **Add New > Project**.
