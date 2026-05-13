@@ -4,15 +4,15 @@ Fullstack financial operations dashboard for transaction processing, portfolio m
 
 ## Tech Stack
 
-| Layer | Technology |
-|-------|-----------|
-| Backend | Python 3.11, FastAPI, SQLAlchemy 2.0, Alembic, pandas, Pydantic v2 |
-| Database | PostgreSQL 16 |
-| Frontend | Next.js 14 (App Router), TypeScript, Tailwind CSS |
-| State | TanStack Query v5, React Context |
-| AI | Anthropic Claude API (with mock fallback) |
-| Infra | Docker, docker-compose |
-| Testing | pytest (31 tests) |
+| Layer    | Technology                                                         |
+| -------- | ------------------------------------------------------------------ |
+| Backend  | Python 3.11, FastAPI, SQLAlchemy 2.0, Alembic, pandas, Pydantic v2 |
+| Database | PostgreSQL 16                                                      |
+| Frontend | Next.js 14 (App Router), TypeScript, Tailwind CSS                  |
+| State    | TanStack Query v5, React Context                                   |
+| AI       | Anthropic Claude API (with mock fallback)                          |
+| Infra    | Docker, docker-compose                                             |
+| Testing  | pytest (31 tests)                                                  |
 
 ## Quick Start
 
@@ -23,6 +23,7 @@ docker-compose up --build
 ```
 
 Services:
+
 - Frontend: http://localhost:3000
 - Backend API: http://localhost:8000
 - API docs: http://localhost:8000/docs
@@ -30,6 +31,7 @@ Services:
 ### Local Development
 
 **Backend:**
+
 ```bash
 cd backend
 uv sync
@@ -40,6 +42,7 @@ uv run uvicorn app.main:app --reload --port 8000
 ```
 
 **Frontend:**
+
 ```bash
 cd frontend
 npm install
@@ -47,6 +50,7 @@ npm run dev
 ```
 
 **Run tests:**
+
 ```bash
 cd backend
 uv run pytest -v
@@ -91,15 +95,15 @@ frontend/src/
 
 ### API Endpoints
 
-| Method | Path | Description |
-|--------|------|-------------|
-| GET | `/health` | Health check |
-| POST | `/api/v1/transactions/upload` | Upload CSV/XLSX |
-| GET | `/api/v1/transactions` | List transactions (paginated) |
-| GET | `/api/v1/clients` | List clients with summaries |
-| GET | `/api/v1/clients/{id}/portfolio` | FIFO portfolio positions |
-| GET | `/api/v1/clients/{id}/violations` | Rule violations |
-| GET | `/api/v1/clients/{id}/insights` | AI portfolio analysis |
+| Method | Path                              | Description                   |
+| ------ | --------------------------------- | ----------------------------- |
+| GET    | `/health`                         | Health check                  |
+| POST   | `/api/v1/transactions/upload`     | Upload CSV/XLSX               |
+| GET    | `/api/v1/transactions`            | List transactions (paginated) |
+| GET    | `/api/v1/clients`                 | List clients with summaries   |
+| GET    | `/api/v1/clients/{id}/portfolio`  | FIFO portfolio positions      |
+| GET    | `/api/v1/clients/{id}/violations` | Rule violations               |
+| GET    | `/api/v1/clients/{id}/insights`   | AI portfolio analysis         |
 
 ### Key Design Decisions
 
@@ -112,6 +116,7 @@ frontend/src/
 ## Testing
 
 31 tests covering:
+
 - FIFO engine: single buy, partial sell, multi-lot FIFO order, short sell detection, loss scenarios
 - Validation: quantity/price/action/ISIN validation, duplicate detection
 - Violations: short selling, concentration risk, day trading pattern detection
@@ -126,8 +131,3 @@ This project is organized as a monorepo:
 - `frontend/` - Next.js dashboard, typed API client, UI components
 - `docs/` - setup, architecture, database, API, and testing notes
 - `sample_data/` - CSV fixtures for upload and QA scenarios
-
-## Deployment
-
-For an assignment/demo deployment, use Render for the backend and Postgres, and Vercel for
-the frontend. See `docs/deployment.md` for the exact steps.
