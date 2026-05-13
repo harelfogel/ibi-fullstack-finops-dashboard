@@ -4,6 +4,32 @@ import { motion } from "framer-motion";
 import { Card } from "@/components/ui/Card";
 import { Insight } from "@/types/insight";
 
+function getRecSentiment(text: string): "danger" | "caution" | "info" {
+  const lower = text.toLowerCase();
+  if (/reduce|sell|exit|close|avoid|cut/.test(lower)) return "danger";
+  if (/diversif|rebalanc|consider|review|limit/.test(lower)) return "caution";
+  return "info";
+}
+
+function getHighlightSentiment(text: string): "danger" | "caution" | "positive" {
+  const lower = text.toLowerCase();
+  if (/violation|risk|exceed|breach|warning|error|loss/.test(lower)) return "danger";
+  if (/strong|positive|gain|good|healthy|growth|return/.test(lower)) return "positive";
+  return "caution";
+}
+
+const recStyles = {
+  danger: { bullet: "text-red-400", border: "border-l-2 border-red-500/40 pl-3" },
+  caution: { bullet: "text-amber-400", border: "border-l-2 border-amber-500/40 pl-3" },
+  info: { bullet: "text-cyan-400", border: "border-l-2 border-cyan-500/40 pl-3" },
+} as const;
+
+const highlightStyles = {
+  danger: "bg-red-500/10 text-red-300 border border-red-500/20",
+  caution: "bg-amber-500/10 text-amber-300 border border-amber-500/20",
+  positive: "bg-emerald-500/10 text-emerald-300 border border-emerald-500/20",
+} as const;
+
 export function InsightsPanel({ insight }: { insight: Insight }) {
   const riskPct = (insight.risk_score / 10) * 100;
   const riskColor =
@@ -83,19 +109,23 @@ export function InsightsPanel({ insight }: { insight: Insight }) {
           <h4 className="mb-3 text-sm font-medium text-slate-400">
             Recommendations
           </h4>
-          <ul className="space-y-2">
-            {insight.recommendations.map((rec, i) => (
-              <motion.li
-                key={i}
-                className="flex gap-2 text-sm text-slate-300"
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.1 * i, duration: 0.3 }}
-              >
-                <span className="mt-0.5 text-cyan-500">&#x2022;</span>
-                {rec}
-              </motion.li>
-            ))}
+          <ul className="space-y-3">
+            {insight.recommendations.map((rec, i) => {
+              const sentiment = getRecSentiment(rec);
+              const style = recStyles[sentiment];
+              return (
+                <motion.li
+                  key={i}
+                  className={`flex gap-2 text-sm text-slate-300 ${style.border}`}
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.1 * i, duration: 0.3 }}
+                >
+                  <span className={`mt-0.5 ${style.bullet}`}>&#x2022;</span>
+                  {rec}
+                </motion.li>
+              );
+            })}
           </ul>
         </Card>
       )}
@@ -106,18 +136,21 @@ export function InsightsPanel({ insight }: { insight: Insight }) {
           <h4 className="mb-3 text-sm font-medium text-slate-400">
             Key Highlights
           </h4>
-          <div className="flex flex-wrap gap-2">
-            {insight.highlights.map((h, i) => (
-              <motion.span
-                key={i}
-                className="rounded-lg bg-slate-800 px-3 py-1.5 text-xs font-medium text-slate-300"
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.1 * i, duration: 0.3 }}
-              >
-                {h}
-              </motion.span>
-            ))}
+          <div className="space-y-2">
+            {insight.highlights.map((h, i) => {
+              const sentiment = getHighlightSentiment(h);
+              return (
+                <motion.div
+                  key={i}
+                  className={`rounded-lg px-3 py-2 text-xs font-medium ${highlightStyles[sentiment]}`}
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.1 * i, duration: 0.3 }}
+                >
+                  {h}
+                </motion.div>
+              );
+            })}
           </div>
         </Card>
       )}
