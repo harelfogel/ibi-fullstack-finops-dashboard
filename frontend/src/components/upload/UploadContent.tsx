@@ -28,13 +28,13 @@ export function UploadContent({ onSuccess, compact }: UploadContentProps) {
         setResult(response.data);
         if (response.data.error_rows === 0) {
           addToast("success", `Successfully processed ${response.data.valid_rows} transactions`);
+          onSuccess?.(response.data);
         } else {
           addToast(
-            "info",
-            `Processed ${response.data.valid_rows} valid, ${response.data.error_rows} errors`,
+            "error",
+            `${response.data.error_rows} validation errors found — ${response.data.valid_rows} rows processed successfully`,
           );
         }
-        onSuccess?.(response.data);
       }
     } catch (err) {
       addToast("error", err instanceof Error ? err.message : "Upload failed");
