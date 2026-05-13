@@ -4,11 +4,11 @@ This document provides full transparency on how AI tools were used to build the 
 
 ## Collaboration Model
 
-| Role | Responsibilities |
-|------|-----------------|
-| **Human developer** | Assignment interpretation, architecture decisions, technology selection, quality review, testing verification, submission |
-| **Claude Code (Opus 4.6)** | Code generation, test writing, Docker configuration, documentation drafting, debugging |
-| **ChatGPT / Codex** | Initial scaffolding ideas, documentation drafts, workflow guidance |
+| Role                       | Responsibilities                                                                                                          |
+| -------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| **Human developer**        | Assignment interpretation, architecture decisions, technology selection, quality review, testing verification, submission |
+| **Claude Code (Opus 4.6)** | Code generation, test writing, Docker configuration, documentation drafting, debugging                                    |
+| **ChatGPT / Codex**        | Initial scaffolding ideas, documentation drafts, workflow guidance                                                        |
 
 The human developer maintained decision authority over architecture, patterns, and trade-offs. AI tools executed on those decisions and proposed implementations for review.
 
@@ -18,86 +18,85 @@ This project uses a structured `.claude/` setup to ensure consistent, high-quali
 
 ### Rules (`.claude/rules/`)
 
-14 glob-targeted rule files that constrain AI output to match project conventions:
+14 glob-targeted rule files that constrain AI output to match project conventions and developer's programming standart:
 
-| Rule | Scope | Purpose |
-|------|-------|---------|
-| `python-style.md` | `backend/**/*.py` | Ruff formatting, Decimal for money, StrEnum, union syntax |
-| `fastapi-patterns.md` | `backend/app/api/**/*.py` | ApiResponse envelope, thin routes, Depends(get_db) |
-| `sqlalchemy-models.md` | `backend/app/models/**/*.py` | Mapped[] style, Numeric(18,6), CheckConstraint |
-| `pydantic-schemas.md` | `backend/app/schemas/**/*.py` | Pydantic v2, from_attributes, Field constraints |
-| `testing.md` | `backend/tests/**/*.py` | SQLite fixtures, AAA pattern, factories |
-| `constants-no-magic.md` | `backend/**/*.py` | Named constants, enums, zero magic numbers |
-| `typescript-react.md` | `frontend/src/**/*.{ts,tsx}` | Strict mode, named exports, path aliases |
-| `tanstack-query.md` | `frontend/src/lib/hooks/**/*.ts` | v5 API, queryKey arrays, mutation invalidation |
-| `tailwind-ui.md` | `frontend/src/components/**/*.tsx` | Dark theme palette, cn() utility, finance aesthetic |
-| `git-conventions.md` | Global | Conventional commits, never commit .env |
-| `docker.md` | Docker files | Multi-stage builds, healthchecks, service ordering |
-| `llm-patterns.md` | `backend/app/services/llm/**/*.py` | System/user prompts, token management, validation, fallback |
-| `error-handling.md` | `backend/**/*.py`, `frontend/src/**/*.{ts,tsx}` | Exception hierarchy, try/catch patterns, logging |
-| `architecture-principles.md` | All source files | SOLID principles, layered architecture, dependency injection |
+| Rule                         | Scope                                           | Purpose                                                      |
+| ---------------------------- | ----------------------------------------------- | ------------------------------------------------------------ |
+| `python-style.md`            | `backend/**/*.py`                               | Ruff formatting, Decimal for money, StrEnum, union syntax    |
+| `fastapi-patterns.md`        | `backend/app/api/**/*.py`                       | ApiResponse envelope, thin routes, Depends(get_db)           |
+| `sqlalchemy-models.md`       | `backend/app/models/**/*.py`                    | Mapped[] style, Numeric(18,6), CheckConstraint               |
+| `pydantic-schemas.md`        | `backend/app/schemas/**/*.py`                   | Pydantic v2, from_attributes, Field constraints              |
+| `testing.md`                 | `backend/tests/**/*.py`                         | SQLite fixtures, AAA pattern, factories                      |
+| `constants-no-magic.md`      | `backend/**/*.py`                               | Named constants, enums, zero magic numbers                   |
+| `typescript-react.md`        | `frontend/src/**/*.{ts,tsx}`                    | Strict mode, named exports, path aliases                     |
+| `tanstack-query.md`          | `frontend/src/lib/hooks/**/*.ts`                | v5 API, queryKey arrays, mutation invalidation               |
+| `tailwind-ui.md`             | `frontend/src/components/**/*.tsx`              | Dark theme palette, cn() utility, finance aesthetic          |
+| `git-conventions.md`         | Global                                          | Conventional commits, never commit .env                      |
+| `docker.md`                  | Docker files                                    | Multi-stage builds, healthchecks, service ordering           |
+| `llm-patterns.md`            | `backend/app/services/llm/**/*.py`              | System/user prompts, token management, validation, fallback  |
+| `error-handling.md`          | `backend/**/*.py`, `frontend/src/**/*.{ts,tsx}` | Exception hierarchy, try/catch patterns, logging             |
+| `architecture-principles.md` | All source files                                | SOLID principles, layered architecture, dependency injection |
 
 ### Commands (`.claude/commands/`)
 
 8 reusable commands for common development workflows:
 
-| Command | Purpose |
-|---------|---------|
-| `/test` | Run pytest, analyze failures |
-| `/dev` | Start Docker stack, verify health |
-| `/db-reset` | Drop/recreate DB, run migrations, seed |
-| `/lint` | Run all linters (Ruff + ESLint + tsc) |
-| `/status` | Project dashboard (git, docker, tests, DB) |
-| `/add-endpoint` | Full-stack endpoint scaffold |
-| `/add-test` | Generate tests for a module |
-| `/upload-sample` | Upload sample CSV, verify pipeline |
+| Command          | Purpose                                    |
+| ---------------- | ------------------------------------------ |
+| `/test`          | Run pytest, analyze failures               |
+| `/dev`           | Start Docker stack, verify health          |
+| `/db-reset`      | Drop/recreate DB, run migrations, seed     |
+| `/lint`          | Run all linters (Ruff + ESLint + tsc)      |
+| `/status`        | Project dashboard (git, docker, tests, DB) |
+| `/add-endpoint`  | Full-stack endpoint scaffold               |
+| `/add-test`      | Generate tests for a module                |
+| `/upload-sample` | Upload sample CSV, verify pipeline         |
 
 ### MCP Servers (`.claude/settings.json`)
 
-| Server | Purpose |
-|--------|---------|
-| `postgres` | Direct database inspection for debugging FIFO results, violations, schema |
+| Server     | Purpose                                                                                    |
+| ---------- | ------------------------------------------------------------------------------------------ |
 | `context7` | Live documentation for FastAPI, SQLAlchemy 2.0, Pydantic v2, Next.js 14, TanStack Query v5 |
 
 ## Architecture Decisions
 
 All architectural choices were made by the human developer with AI providing implementation:
 
-| Decision | Rationale | Who Decided |
-|----------|-----------|-------------|
-| FIFO as pure function | Testability, no side effects, reusable by portfolio + violation services | Human |
-| Response envelope pattern | Consistent API contract, typed error handling on frontend | Human |
-| LLM factory + mock fallback | Demo works without API keys, graceful degradation | Human |
-| System prompt + enriched user prompt | Better AI output quality with role definition and data context | Human |
-| SQLite for tests | Fast CI, no Docker dependency for testing | Human |
-| Numeric(18,6) for money | Avoid floating-point errors in financial calculations | Human |
-| Dark theme + finance aesthetic | Matches fintech industry expectations, demonstrates UI skill | Human |
-| TanStack Query over Redux | Server state only, no complex client state needed | Human |
-| Violation cascade on upload | Ensures consistency — always recalculated from transaction history | Human |
+| Decision                             | Rationale                                                                | Who Decided |
+| ------------------------------------ | ------------------------------------------------------------------------ | ----------- |
+| FIFO as pure function                | Testability, no side effects, reusable by portfolio + violation services | Human       |
+| Response envelope pattern            | Consistent API contract, typed error handling on frontend                | Human       |
+| LLM factory + mock fallback          | Demo works without API keys, graceful degradation                        | Human       |
+| System prompt + enriched user prompt | Better AI output quality with role definition and data context           | Human       |
+| SQLite for tests                     | Fast CI, no Docker dependency for testing                                | Human       |
+| Numeric(18,6) for money              | Avoid floating-point errors in financial calculations                    | Human       |
+| Dark theme + finance aesthetic       | Matches fintech industry expectations, demonstrates UI skill             | Human       |
+| TanStack Query over Redux            | Server state only, no complex client state needed                        | Human       |
+| Violation cascade on upload          | Ensures consistency — always recalculated from transaction history       | Human       |
 
 ## Generated vs. Reviewed Breakdown
 
-| Component | Generated By | Reviewed By |
-|-----------|-------------|-------------|
-| Backend models + migrations | Claude Code | Human — verified constraints, indexes |
-| FIFO engine | Claude Code | Human — verified lot tracking logic, edge cases |
-| Upload pipeline orchestration | Claude Code | Human — verified transaction flow |
-| Violation detection rules | Claude Code | Human — verified thresholds match requirements |
-| API route handlers | Claude Code | Human — verified response shapes |
-| Test suite (31 tests) | Claude Code | Human — ran and verified all pass |
-| Frontend components | Claude Code | Human — visual review, interaction testing |
-| Docker configuration | Claude Code | Human — verified build + startup |
-| Documentation | Claude Code | Human — accuracy review |
+| Component                     | Generated By | Reviewed By                                     |
+| ----------------------------- | ------------ | ----------------------------------------------- |
+| Backend models + migrations   | Claude Code  | Human — verified constraints, indexes           |
+| FIFO engine                   | Claude Code  | Human — verified lot tracking logic, edge cases |
+| Upload pipeline orchestration | Claude Code  | Human — verified transaction flow               |
+| Violation detection rules     | Claude Code  | Human — verified thresholds match requirements  |
+| API route handlers            | Claude Code  | Human — verified response shapes                |
+| Test suite (31 tests)         | Claude Code  | Human — ran and verified all pass               |
+| Frontend components           | Claude Code  | Human — visual review, interaction testing      |
+| Docker configuration          | Claude Code  | Human — verified build + startup                |
+| Documentation                 | Claude Code  | Human — accuracy review                         |
 
 ## AI Corrections Log
 
 Issues caught and corrected during development:
 
-| Issue | Root Cause | Fix |
-|-------|-----------|-----|
-| JSONB column type failed in SQLite tests | PostgreSQL-specific type | Changed to `JSON` type (compatible with both) |
-| UUID type import error in SQLite | PostgreSQL-specific UUID | Changed to portable `Uuid()` type |
-| FIFO engine edge case with zero-quantity lots | Lot not removed from deque | Added `popleft()` when lot fully consumed |
+| Issue                                         | Root Cause                 | Fix                                           |
+| --------------------------------------------- | -------------------------- | --------------------------------------------- |
+| JSONB column type failed in SQLite tests      | PostgreSQL-specific type   | Changed to `JSON` type (compatible with both) |
+| UUID type import error in SQLite              | PostgreSQL-specific UUID   | Changed to portable `Uuid()` type             |
+| FIFO engine edge case with zero-quantity lots | Lot not removed from deque | Added `popleft()` when lot fully consumed     |
 
 ## Verification Checklist
 
@@ -118,20 +117,25 @@ Issues caught and corrected during development:
 ## LLM Prompt Engineering
 
 ### System Prompt
+
 Defines the AI as a "senior financial operations analyst" with specific rules:
+
 - Reference actual portfolio values and ISINs
 - Flag compliance violations as high priority
 - Respond with JSON only, no markdown
 - Keep recommendations actionable with specific thresholds
 
 ### User Prompt Enrichment
+
 Raw portfolio data is enriched before sending to the LLM:
+
 - Portfolio weight percentages per position (e.g., "76.3% of portfolio")
 - Violation severity breakdown (X errors, Y warnings)
 - Formatted dollar amounts for readability
 - Structured sections: CLIENT, PORTFOLIO OVERVIEW, POSITIONS, VIOLATIONS
 
 ### Validation & Error Handling
+
 - LLM response parsed with `json.loads()` + `InsightResponse.model_validate()`
 - JSON extraction handles wrapper text (`find("{")` / `rfind("}")`)
 - Provider failures caught with try/except, automatic fallback to MockProvider

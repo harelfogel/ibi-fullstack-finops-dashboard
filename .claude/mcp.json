@@ -1,0 +1,19 @@
+{
+  "mcpServers": {
+    "postgres": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-postgres",
+        "postgresql://finops:finops@localhost:5432/finops_db"
+      ]
+    },
+    "context7": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@upstash/context7-mcp@latest"
+      ]
+    }
+  }
+}
