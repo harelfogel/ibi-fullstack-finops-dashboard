@@ -41,6 +41,8 @@ uv run alembic upgrade head
 uv run uvicorn app.main:app --reload --port 8000
 ```
 
+> **AI Insights:** Locally, AI insights use a mock provider by default (no API key needed). To enable real Anthropic Claude analysis, set `LLM_PROVIDER=anthropic` and add your `ANTHROPIC_API_KEY` in `backend/.env`.
+
 **Frontend:**
 
 ```bash
@@ -110,7 +112,7 @@ frontend/src/
 - **FIFO Engine**: Pure function with deque-based lot tracking - no side effects, fully testable
 - **Zero Magic Numbers**: All thresholds, limits, and codes defined in `constants.py`
 - **Response Envelope**: Consistent `{ success, data, error, pagination }` across all endpoints
-- **AI Fallback**: Deterministic mock insights when API key absent or on failure
+- **AI Fallback**: Real Anthropic Claude API in production; deterministic mock insights locally (no API key needed) or on failure
 - **Violation Detection**: Short selling (error), concentration risk (warning), day trading (warning)
 
 ## Testing
