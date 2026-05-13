@@ -115,6 +115,36 @@ frontend/src/
 - **AI Fallback**: Real Anthropic Claude API in production; deterministic mock insights locally (no API key needed) or on failure
 - **Violation Detection**: Short selling (error), concentration risk (warning), day trading (warning)
 
+## Assumptions
+
+- Uploaded CSV/XLSX transaction files are the source of truth for client activity.
+- Each transaction has a unique `TransactionId`; duplicate uploads are rejected.
+- Supported transaction actions are `buy` and `sell`.
+- Quantities and prices must be positive values.
+- ISIN values are expected to be 12 characters.
+- Portfolio positions are recalculated from transaction history after each upload.
+- FIFO is used for realized P&L and remaining lot cost basis.
+- Current market value uses the latest transaction price for each ISIN as a market-price proxy.
+- Supported rule checks are short selling, concentration risk, and day trading.
+- Concentration risk is flagged when one ISIN represents more than 50% of a client's portfolio value.
+- Day trading is flagged when there are 3 or more buy/sell pairs for the same ISIN inside a 24-hour window.
+- AI insights use Anthropic Claude when configured; local/demo runs can use the deterministic mock fallback.
+
+## Database and Seed Data
+
+- Database schema is managed with Alembic migrations in `backend/alembic/versions/`.
+- The main schema migration is `backend/alembic/versions/001_initial_schema.py`.
+- Seed/sample input data is provided in the `sample_data/` folder.
+- `sample_data/transactions_sample.csv` is the primary seed file for a normal demo upload.
+- The `sample_data/` folder also includes QA datasets for validation errors, short selling, day trading, multi-lot FIFO, full-sell/loss handling, concentration risk, duplicate uploads, sells-only, and buys-only scenarios.
+
+After starting the stack, seed the database by uploading a CSV through the UI or with:
+
+```bash
+curl -X POST http://localhost:8000/api/v1/transactions/upload \
+  -F "file=@sample_data/transactions_sample.csv"
+```
+
 ## Testing
 
 31 tests covering:
