@@ -1,8 +1,9 @@
 """Unit tests for the validation service."""
 
+from unittest.mock import MagicMock
+
 import pandas as pd
 import pytest
-from unittest.mock import MagicMock
 
 from app.services.validation_service import validate_transactions
 

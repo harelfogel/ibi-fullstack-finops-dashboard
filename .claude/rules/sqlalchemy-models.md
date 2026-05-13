@@ -14,3 +14,16 @@ globs: backend/app/models/**/*.py
 - JSON columns use `JSON` type (not JSONB) for SQLite test compatibility.
 - Define `__tablename__` explicitly on every model.
 - Relationships use `relationship()` with `back_populates`.
+
+## Data Integrity & ACID Compliance
+- Use explicit foreign key constraints — enforce referential integrity at the DB level.
+- Wrap related writes in a single `session.commit()` — e.g., upload persists transactions + recalculates portfolio + detects violations atomically.
+- Use `session.flush()` before dependent queries to ensure write visibility within a transaction.
+- CheckConstraints enforce domain invariants at the DB level (`quantity > 0`, `price > 0`).
+- Unique constraints prevent duplicate records: `transaction_id`, `client_id + isin` composite.
+
+## Indexing Strategy
+- Index all foreign key columns: `client_id` on transactions, portfolio_positions, violations.
+- Composite index on `(client_id, isin)` for portfolio position lookups.
+- Index `transaction_id` for uniqueness checks during upload.
+- Add indexes on columns used in WHERE/ORDER BY: `created_at`, `violation_type`.

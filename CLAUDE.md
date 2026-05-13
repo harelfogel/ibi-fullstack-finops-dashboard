@@ -57,6 +57,8 @@ frontend/
 - **Service layer**: Routes are thin; business logic lives in `services/`
 - **FIFO engine**: Pure function in `utils/fifo_engine.py` — no DB side effects, deque-based lot tracking
 - **LLM factory**: `create_llm_provider()` returns Anthropic/OpenAI/Mock; insight service falls back to Mock on failure
+- **LLM prompts**: System prompt (role + rules) + enriched user prompt (portfolio weights, violation breakdowns)
+- **SOLID**: SRP services, OCP factory pattern, LSP provider interface, DI via FastAPI Depends()
 - **Upload pipeline**: Parse CSV -> Validate rows -> Persist transactions -> Recalculate portfolio (FIFO) -> Detect violations
 - **Violation detection**: Short selling (ERROR), concentration risk >50% (WARNING), day trading >=3 pairs/24h (WARNING)
 

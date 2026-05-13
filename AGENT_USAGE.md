@@ -18,7 +18,7 @@ This project uses a structured `.claude/` setup to ensure consistent, high-quali
 
 ### Rules (`.claude/rules/`)
 
-11 glob-targeted rule files that constrain AI output to match project conventions:
+14 glob-targeted rule files that constrain AI output to match project conventions:
 
 | Rule | Scope | Purpose |
 |------|-------|---------|
@@ -33,6 +33,9 @@ This project uses a structured `.claude/` setup to ensure consistent, high-quali
 | `tailwind-ui.md` | `frontend/src/components/**/*.tsx` | Dark theme palette, cn() utility, finance aesthetic |
 | `git-conventions.md` | Global | Conventional commits, never commit .env |
 | `docker.md` | Docker files | Multi-stage builds, healthchecks, service ordering |
+| `llm-patterns.md` | `backend/app/services/llm/**/*.py` | System/user prompts, token management, validation, fallback |
+| `error-handling.md` | `backend/**/*.py`, `frontend/src/**/*.{ts,tsx}` | Exception hierarchy, try/catch patterns, logging |
+| `architecture-principles.md` | All source files | SOLID principles, layered architecture, dependency injection |
 
 ### Commands (`.claude/commands/`)
 
@@ -65,6 +68,7 @@ All architectural choices were made by the human developer with AI providing imp
 | FIFO as pure function | Testability, no side effects, reusable by portfolio + violation services | Human |
 | Response envelope pattern | Consistent API contract, typed error handling on frontend | Human |
 | LLM factory + mock fallback | Demo works without API keys, graceful degradation | Human |
+| System prompt + enriched user prompt | Better AI output quality with role definition and data context | Human |
 | SQLite for tests | Fast CI, no Docker dependency for testing | Human |
 | Numeric(18,6) for money | Avoid floating-point errors in financial calculations | Human |
 | Dark theme + finance aesthetic | Matches fintech industry expectations, demonstrates UI skill | Human |
@@ -103,6 +107,32 @@ Issues caught and corrected during development:
 - [x] Upload pipeline: CSV → validation → persist → FIFO → violations
 - [x] All API endpoints return correct response envelope format
 - [x] Violation detection triggers for all 3 rule types
-- [x] AI insights endpoint works with mock provider (no API key needed)
+- [x] AI insights endpoint works with real Anthropic API (Claude) and falls back to mock
+- [x] LLM uses system prompt (role definition) + enriched user prompt (portfolio weights, violation breakdowns)
+- [x] LLM response validated via Pydantic schema with try/catch fallback
 - [x] Frontend renders all pages: upload, clients, portfolio, actions
 - [x] P&L values use Decimal precision throughout the stack
+- [x] Ruff linting passes with zero errors
+- [x] SOLID principles followed: SRP services, factory pattern (OCP), DI via Depends()
+
+## LLM Prompt Engineering
+
+### System Prompt
+Defines the AI as a "senior financial operations analyst" with specific rules:
+- Reference actual portfolio values and ISINs
+- Flag compliance violations as high priority
+- Respond with JSON only, no markdown
+- Keep recommendations actionable with specific thresholds
+
+### User Prompt Enrichment
+Raw portfolio data is enriched before sending to the LLM:
+- Portfolio weight percentages per position (e.g., "76.3% of portfolio")
+- Violation severity breakdown (X errors, Y warnings)
+- Formatted dollar amounts for readability
+- Structured sections: CLIENT, PORTFOLIO OVERVIEW, POSITIONS, VIOLATIONS
+
+### Validation & Error Handling
+- LLM response parsed with `json.loads()` + `InsightResponse.model_validate()`
+- JSON extraction handles wrapper text (`find("{")` / `rfind("}")`)
+- Provider failures caught with try/except, automatic fallback to MockProvider
+- All failures logged at exception level for debugging

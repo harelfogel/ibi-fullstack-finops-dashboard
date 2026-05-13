@@ -14,7 +14,10 @@ logging.basicConfig(level=settings.LOG_LEVEL)
 
 app = FastAPI(
     title="IBI FinOps Dashboard API",
-    description="Financial operations dashboard backend - transaction processing, portfolio management, and AI insights.",
+    description=(
+        "Financial operations dashboard backend"
+        " - transaction processing, portfolio management, and AI insights."
+    ),
     version="1.0.0",
 )
 

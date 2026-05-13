@@ -3,7 +3,6 @@
 from decimal import Decimal
 from enum import StrEnum
 
-
 # ── Upload constraints ──────────────────────────────────────────────
 MAX_UPLOAD_SIZE_BYTES = 10_485_760  # 10 MB
 ALLOWED_EXTENSIONS = {".csv", ".xlsx"}

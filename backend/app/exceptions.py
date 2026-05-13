@@ -6,7 +6,7 @@ from fastapi.responses import JSONResponse
 from app.constants import ErrorCode
 
 
-class AppException(Exception):
+class AppException(Exception):  # noqa: N818
     """Base application exception."""
 
     def __init__(

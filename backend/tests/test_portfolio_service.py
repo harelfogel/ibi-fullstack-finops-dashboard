@@ -1,14 +1,14 @@
 """Integration tests for the portfolio service."""
 
 import uuid
-from datetime import datetime, timezone, timedelta
+from datetime import datetime, timedelta, timezone
 from decimal import Decimal
 
 from sqlalchemy.orm import Session
 
 from app.models.client import Client
 from app.models.transaction import Transaction
-from app.services.portfolio_service import recalculate_portfolio, get_portfolio_summary
+from app.services.portfolio_service import get_portfolio_summary, recalculate_portfolio
 
 
 def _seed_client(db: Session, client_id: str) -> None:

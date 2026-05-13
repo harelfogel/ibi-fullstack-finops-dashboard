@@ -1,10 +1,9 @@
 """Unit tests for the violation detection service."""
 
 import uuid
-from datetime import datetime, timezone, timedelta
+from datetime import datetime, timedelta, timezone
 from decimal import Decimal
 
-import pytest
 from sqlalchemy.orm import Session
 
 from app.models.client import Client
@@ -74,8 +73,14 @@ class TestShortSellingDetection:
         """Selling more than available triggers short-selling violation."""
         _seed_client(db, "C001")
         base = datetime(2023, 11, 1, tzinfo=timezone.utc)
-        _seed_transaction(db, "T1", "C001", "US1234567890", "buy", Decimal("50"), Decimal("100"), base)
-        _seed_transaction(db, "T2", "C001", "US1234567890", "sell", Decimal("80"), Decimal("110"), base + timedelta(days=1))
+        _seed_transaction(
+            db, "T1", "C001", "US1234567890", "buy",
+            Decimal("50"), Decimal("100"), base,
+        )
+        _seed_transaction(
+            db, "T2", "C001", "US1234567890", "sell",
+            Decimal("80"), Decimal("110"), base + timedelta(days=1),
+        )
 
         violations = detect_violations("C001", db)
 
@@ -87,8 +92,14 @@ class TestShortSellingDetection:
         """Selling within available quantity does not trigger violation."""
         _seed_client(db, "C001")
         base = datetime(2023, 11, 1, tzinfo=timezone.utc)
-        _seed_transaction(db, "T1", "C001", "US1234567890", "buy", Decimal("100"), Decimal("100"), base)
-        _seed_transaction(db, "T2", "C001", "US1234567890", "sell", Decimal("50"), Decimal("110"), base + timedelta(days=1))
+        _seed_transaction(
+            db, "T1", "C001", "US1234567890", "buy",
+            Decimal("100"), Decimal("100"), base,
+        )
+        _seed_transaction(
+            db, "T2", "C001", "US1234567890", "sell",
+            Decimal("50"), Decimal("110"), base + timedelta(days=1),
+        )
 
         violations = detect_violations("C001", db)
 

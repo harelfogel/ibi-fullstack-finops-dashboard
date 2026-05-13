@@ -106,7 +106,13 @@ def validate_transactions(df: pd.DataFrame, db: Session) -> ValidationResult:
             row_errors.append(RowError(row_num, "isin", "Missing ISIN"))
         elif len(isin) != ISIN_LENGTH or not ISIN_PATTERN.match(isin):
             row_errors.append(
-                RowError(row_num, "isin", f"Invalid ISIN format '{isin}' (expected {ISIN_LENGTH} chars, 2 letters + 10 alphanumeric)")
+                RowError(
+                    row_num,
+                    "isin",
+                    f"Invalid ISIN format '{isin}'"
+                    f" (expected {ISIN_LENGTH} chars,"
+                    " 2 letters + 10 alphanumeric)",
+                )
             )
 
         # Action
@@ -114,7 +120,12 @@ def validate_transactions(df: pd.DataFrame, db: Session) -> ValidationResult:
         valid_actions = {a.value for a in TransactionAction}
         if action not in valid_actions:
             row_errors.append(
-                RowError(row_num, "action", f"Invalid action '{action}'. Must be one of: {', '.join(valid_actions)}")
+                RowError(
+                    row_num,
+                    "action",
+                    f"Invalid action '{action}'."
+                    f" Must be one of: {', '.join(valid_actions)}",
+                )
             )
 
         # Quantity
@@ -123,7 +134,7 @@ def validate_transactions(df: pd.DataFrame, db: Session) -> ValidationResult:
             if quantity <= 0:
                 row_errors.append(RowError(row_num, "quantity", "Quantity must be greater than 0"))
         except (InvalidOperation, ValueError):
-            row_errors.append(RowError(row_num, "quantity", f"Invalid quantity value"))
+            row_errors.append(RowError(row_num, "quantity", "Invalid quantity value"))
 
         # Price
         try:
@@ -131,7 +142,7 @@ def validate_transactions(df: pd.DataFrame, db: Session) -> ValidationResult:
             if price <= 0:
                 row_errors.append(RowError(row_num, "price", "Price must be greater than 0"))
         except (InvalidOperation, ValueError):
-            row_errors.append(RowError(row_num, "price", f"Invalid price value"))
+            row_errors.append(RowError(row_num, "price", "Invalid price value"))
 
         # Timestamp
         try:
