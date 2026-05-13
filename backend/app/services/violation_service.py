@@ -91,8 +91,8 @@ def _detect_short_selling(client_id: str, db: Session) -> list[Violation]:
                     severity=ViolationSeverity.ERROR,
                     message=(
                         f"Short selling detected on {isin}: attempted to sell "
-                        f"{short['sell_quantity']} units but only "
-                        f"{short['available_quantity']} available"
+                        f"{int(short['sell_quantity'])} units but only "
+                        f"{int(short['available_quantity'])} available"
                     ),
                     details={"isin": isin, **short},
                 )
